@@ -1,0 +1,77 @@
+import torch 
+import numpy as np
+import matplotlib.pyplot as plt
+import string
+import torch.nn as nn
+import pandas as pd
+from torch.utils.data import Dataset, DataLoader
+import os
+from collections import Counter
+import sys
+import sklearn as sk
+
+
+dataset_location = "NewsGroup_dataset" # Get the dataset file location. --> This can change based on where we up the files.
+file_type = ".txt" # Check only .txt files, do not look at .csv file in folder, (It's useless).
+saved_folder = "saved_folder"
+
+# File names from folder:
+list_files = ['alt.atheism.txt','comp.graphics.txt','comp.os.ms-windows.misc.txt','alt.atheism.txt',
+              'comp.graphics.txt','comp.os.ms-windows.misc.txt','comp.sys.ibm.pc.hardware.txt',
+              'comp.sys.mac.hardware.txt','comp.windows.x.txt','misc.forsale.txt','rec.autos.txt',
+              'rec.motorcycles.txt','rec.sport.baseball.txt','rec.sport.hockey.txt','sci.crypt.txt'
+                ,'sci.electronics.txt','sci.med.txt','sci.space.txt','soc.religion.christian.txt',
+              'talk.politics.guns.txt','talk.politics.mideast.txt','talk.politics.misc.txt'
+            ,'talk.religion.misc.txt']
+
+
+forbidden_words = ['newsgroup', 'from', 'and', 'but', 'is', 'will', 'be'] # IGNORE THIS --> NOT USED RIGHT NOW BUT KEPT JUST IN CASE
+
+
+too_many_appearances = 1500 # Use this as a parameter for whether too many words (currently if >1500 then remove)
+
+print("Creating bag of words for all files...\n")
+
+def normalize_line_endings(file_path):
+    with open(file_path, 'rb') as f:
+        content = f.read().replace(b'\r\n', b'\n')
+    with open(file_path, 'wb') as f:
+        f.write(content)
+
+        
+
+def bag_of_words(dataset_location, saved_folder, list_files, too_many_appearances):
+    for file_name in list_files:
+        print("Creating bag of words for: ", file_name)
+        file_path = os.path.join(dataset_location, file_name)
+        with open(file_path, 'r', encoding='latin-1', errors='ignore') as file:
+            text = file.read().lower()
+            # Remove punctuation
+            text = text.translate(str.maketrans('', '', string.punctuation))
+
+
+            # Tokenize the text
+            tokens = text.split()
+            tokens = [word for word in tokens if not word.isdigit()]
+
+
+            # Count word frequencies
+            bow = Counter(tokens)
+            bow = {word: count for word, count in bow.items() if count <= too_many_appearances} # Filter any words where there's too many --> This removes common words like "for", "be", "and".
+
+
+            # Save the word counts to a .txt file
+            output_file_name = os.path.splitext(file_name)[0] + '_BoW.txt'
+            output_file_path = os.path.join(saved_folder, output_file_name)
+            with open(output_file_path, 'w', encoding='latin-1', newline='\n') as output_file:
+                for word, count in bow.items():
+                    output_file.write(f"{word}: {count}\n")
+        normalize_line_endings(output_file_path)
+
+    print("Bag of words created for all files! Goodbye!")
+
+
+
+
+bag_of_words(dataset_location, saved_folder, list_files, too_many_appearances)
+sys.exit(0)
