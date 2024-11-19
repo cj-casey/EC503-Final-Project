@@ -79,33 +79,48 @@ def twenty_newsgroup_to_csv(train_or_test):
 
 
 def tfidf():
-
-    newsgroup_data = pd.read_csv('20_newsgroup_train.csv')
-    newsgroup_data = newsgroup_data.dropna(subset=['text'])
+    # load train data
+    newsgroup_data_train = pd.read_csv('20_newsgroup_train.csv')
+    newsgroup_data_train = newsgroup_data_train.dropna(subset=['text'])
+    # load test data
+    newsgroup_data_test = pd.read_csv('20_newsgroup_test.csv')
+    newsgroup_data_test = newsgroup_data_test.dropna(subset=['text'])
     # tdif
     tfidf = TfidfVectorizer(stop_words='english', max_df=0.95, min_df=3);
-    result = tfidf.fit_transform(newsgroup_data['text'])
-    feature_names = tfidf.get_feature_names_out()
-    # print top 10 words by weight
-    dense_matrix = result.toarray()
+    train_result = tfidf.fit_transform(newsgroup_data_train['text']) # fit on train data
+    test_result = tfidf.transform(newsgroup_data_test['text']) #transform on test data
+    # create train data and label
+    tfidf_train_data = pd.DataFrame(train_result.toarray(), columns=tfidf.get_feature_names_out())
+    tfidf_train_label = newsgroup_data_train['target']
+    #create test data and label
+    tfidf_test_data = pd.DataFrame(test_result.toarray(), columns=tfidf.get_feature_names_out())
+    tfidf_test_label = newsgroup_data_test['target']
+    #save all as CSVs
+    tfidf_train_data.to_csv('tfidf_train_data.csv', index=False)
+    tfidf_train_label.to_csv('tfidf_train_label.csv', index=False)
+    tfidf_test_data.to_csv('tfidf_test_data.csv', index=False)
+    tfidf_test_label.to_csv('tfidf_test_label.csv', index=False)
+
+    # OPTIONAL print top 10 words by weight
+
     feature_names = tfidf.get_feature_names_out()
     top_n = 10
     i = 0
-    for doc_idx, doc in enumerate(dense_matrix):
-        top_indices = np.argsort(doc)[-top_n:][::-1]
-        label = newsgroup_data['title'].iloc[
-            doc_idx]
-        print(f"\nDocument {doc_idx}, Label {label}:")
+    #for doc_idx, doc in enumerate(dense_matrix):
+    #    top_indices = np.argsort(doc)[-top_n:][::-1]
+    #    label = newsgroup_data['title'].iloc[
+    #        doc_idx]
+    #    print(f"\nDocument {doc_idx}, Label {label}:")
 
         # print top n features for articles
-        for idx in top_indices:
-            print(f"  {feature_names[idx]}: {doc[idx]}")
+    #    for idx in top_indices:
+    #        print(f"  {feature_names[idx]}: {doc[idx]}")
     #create final dataset
     #['article #','feature_name1',...'feature_name_n','target','title']
-    tfidf_train_data = pd.DataFrame(dense_matrix,columns = feature_names)
-    tfidf_train_data['label'] = newsgroup_data['target']
-    tfidf_train_data.to_csv('tfidf_train_data.csv', index=False)
-    print(len(feature_names))
+    #tfidf_train_data = pd.DataFrame(dense_matrix,columns = feature_names)
+    #tfidf_train_data['label'] = newsgroup_data['target']
+    #tfidf_train_data.to_csv('tfidf_train_data.csv', index=False)
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     tfidf()
