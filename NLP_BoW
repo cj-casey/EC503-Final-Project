@@ -111,11 +111,12 @@ def bag_of_words(saved_folder, file_name, too_many_appearances):
 
     print(f"Word counts saved to {output_file_path}")
 
-
+# Since the matrix that is created is full of 0s in the titles to save on space when creating the file, you must run it with this code in order to read it properly:
 def read_csv_final(csv_file):
     dataset = pd.read_csv(csv_file)
     last_article = None
     data = []
+    # Basically works the same as the code to extract the features, except here, the logic is reversed. 
     for index, row in dataset.iterrows():
         article_name = row['Article_Name']
         word = row['word']
@@ -137,5 +138,9 @@ def read_csv_final(csv_file):
 
 
 
-bag_of_words(saved_folder, file_name, too_many_appearances)
+
+for file in list_files:
+    bag_of_words(saved_folder, file, too_many_appearances)
+
+# Fun fact: If you try to run this code when you have one of the csv files open, it will crash, due to permission errors, so do not do that. 
 sys.exit(0)
