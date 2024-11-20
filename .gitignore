@@ -1,2 +1,6 @@
 /myenv
 /.vscode
+/tfidf_train_label.csv
+/tfidf_test_data.csv
+/tfidf_train_data.csv
+/tfidf_test_label.csv

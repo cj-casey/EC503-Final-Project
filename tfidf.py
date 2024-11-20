@@ -1,4 +1,4 @@
-# This is a sample Python script.
+# Output of this script (tidf_test_data.csv, tfidf_test_label.csv, tfidf_train_data.csv, tfidf_train_label.csv) are too large to be uploaded to GitHub. Please run this script to generate them. They will be used in the FeatureSelection.py script. They are automatically ignored by the .gitignore file, so don't worry about needing to delete them.
 import string
 from pathlib import Path
 import kagglehub
