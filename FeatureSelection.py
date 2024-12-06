@@ -35,3 +35,10 @@ feature_scores.to_csv("selected_features.csv", index=False)
 # View top 10 features
 print(f"Top 10 of {k} selected features:")
 print(feature_scores.head(10))  
+
+# Create a new dataframe with only the top k features
+selected_feature_names = features.columns[selected_indices]
+transformed_data = features[selected_feature_names]
+
+# Save the transformed dataset
+transformed_data.to_csv('transformed_data.csv', index=False)
