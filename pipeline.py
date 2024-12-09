@@ -22,9 +22,12 @@ def main(args):
     nlp = args.nlp
 
     # for cv_folds 0-4
-    ccr = []
-    f1_score = []
-    conf_mat = []
+    train_ccr = []
+    train_f1_score = []
+    train_conf_mat = []
+    test_ccr = []
+    test_f1_score = []
+    test_conf_mat = []
     for cv_fold in range(0,4):
         #call BoW -> tfidf_BoW_input or BoW or tfidf() based on settings
         if(args.nlp == 'bow_tfidf'):
@@ -49,17 +52,20 @@ def main(args):
             exit(-1)
         #call svm,rfc,xgb based on settings
         if(args.model == 'svm'):
-            ccr[cv_fold],f1_score[cv_fold],conf_mat[cv_fold] = svm(fs_train_data,train_label,fs_test_data,test_label,gamma=gamma, c=c)
+            train_ccr[cv_fold],train_f1_score[cv_fold],train_conf_mat[cv_fold],test_ccr[cv_fold],test_f1_score[cv_fold],test_conf_mat[cv_fold] = svm(fs_train_data,train_label,fs_test_data,test_label,gamma=gamma, c=c)
         elif(args.model == 'rfc'):
-            ccr[cv_fold], f1_score[cv_fold], conf_mat[cv_fold] = rfc(fs_train_data, train_label, fs_test_data, test_label)
+            train_ccr[cv_fold],train_f1_score[cv_fold],train_conf_mat[cv_fold],test_ccr[cv_fold],test_f1_score[cv_fold],test_conf_mat[cv_fold] = rfc(fs_train_data, train_label, fs_test_data, test_label)
         elif(args.model =='xgb'):
-            ccr[cv_fold], f1_score[cv_fold], conf_mat[cv_fold] = xgb(fs_train_data, train_label, fs_test_data, test_label)
+            train_ccr[cv_fold],train_f1_score[cv_fold],train_conf_mat[cv_fold],test_ccr[cv_fold],test_f1_score[cv_fold],test_conf_mat[cv_fold] = xgb(fs_train_data, train_label, fs_test_data, test_label)
         else:
             print("Error: No Model Entered")
             exit(-1)
         #compute average results
-    print(f"--TESTING CCR--\n{np.mean(ccr)}")
-    print(f"--TESTING F1--\n{np.mean(f1_score)}")
+    print(f"--TRAINING CCR--\n{np.mean(train_ccr)}")
+    print(f"--TRAINING F1--\n{np.mean(train_f1_score)}")
+
+    print(f"--TESTING CCR--\n{np.mean(test_ccr)}")
+    print(f"--TESTING F1--\n{np.mean(test_f1_score)}")
     
 
 if __name__ == "__main__":
