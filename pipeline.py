@@ -2,7 +2,7 @@ import argparse
 from NLP_BoW import BoW
 from tfidf import tfidf,tfidf_BoW_input
 import numpy as np
-from FeatureSelection import chi_square, mutual_info
+from FeatureSelection import chi_squared_selection, mutual_info_selection
 from SVM_decision import svm
 from RFC_decision import rfc
 from XGB_decision import xgb
@@ -19,6 +19,7 @@ def main(args):
     c = args.c # for SVC
     gamma = args.gamma # for
     k = args.topk
+    nlp = args.nlp
 
     # for cv_folds 0-4
     ccr = []
@@ -40,9 +41,9 @@ def main(args):
 
         #call chi-square or mutual information based on settings
         if(args.fs =='chi_square'):
-            fs_train_data,fs_test_data = chi_square(train_data,train_label,test_data,test_label, k=k)
+            fs_train_data,fs_test_data = chi_squared_selection(nlp, train_data, train_label, test_data, test_label, k)
         elif(args.fs =='mutual_info'):
-            fs_train_data, fs_test_data = mutual_info(train_data, train_label, test_data, test_label, k=k)
+            fs_train_data, fs_test_data = mutual_info_selection(nlp, train_data, train_label, test_data, test_label, k)
         else:
             print("Error: No Feature Selection Method Entered")
             exit(-1)
@@ -75,7 +76,7 @@ if __name__ == "__main__":
     parser.add_argument('--max_df', type=float, required=False, default=0.95, help='max_df Hyperparameter')
     parser.add_argument('--c', type=float, required=False, default=1, help='c Hyperparameter')
     parser.add_argument('--gamma', type=float, required=False, default=1, help='gamma Hyperparameter')
-    parser.add_argument('--topk', type=int, required=False, default=3, help='topk features Hyperparameter')
+    parser.add_argument('--topk', type=int, required=False, default=100, help='topk features Hyperparameter')
     # Parse the arguments
     args = parser.parse_args()
 
