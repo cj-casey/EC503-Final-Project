@@ -1,4 +1,5 @@
-# Output of this script (tidf_test_data.csv, tfidf_test_label.csv, tfidf_train_data.csv, tfidf_train_label.csv) are too large to be uploaded to GitHub. Please run this script to generate them. They will be used in the FeatureSelection.py script. They are automatically ignored by the .gitignore file, so don't worry about needing to delete them.
+# This is a sample Python script.
+import math
 import string
 from pathlib import Path
 import kagglehub
@@ -8,30 +9,10 @@ from sklearn.datasets import fetch_20newsgroups
 import numpy as np
 from scipy.sparse import coo
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import StratifiedKFold
 import pandas as pd
 import re
 
-path = kagglehub.dataset_download('crawford/20-newsgroups')
-print(path)
-list_files = ['altatheism', 'compgraphics', 'composmswindowsmisc', 'altatheism',
-              'compgraphics', 'composmswindowsmisc', 'compsysibmpchardware',
-              'compsysmachardware', 'compwindowsx', 'miscforsale', 'recautos',
-              'recmotorcycles', 'recsportbaseball', 'recsporthockey', 'scicrypt'
-    , 'scielectronics', 'scimed', 'scispace', 'socreligionchristian',
-              'talkpoliticsguns', 'talkpoliticsmideast', 'talkpoliticsmisc'
-    , 'talkreligionmisc']
-remove_words = ['subject', 'Subject', 'maxaxaxaxaxaxaxaxaxaxaxaxaxaxax', 'Newsgroup', 'Newsgroup:', 'document_id',
-                'Documentid', 'documentid', 'edu', 'com', 'altatheism', 'compgraphics', 'composmswindowsmisc',
-                'altatheism',
-                'compgraphics', 'composmswindowsmisc', 'compsysibmpchardware',
-                'compsysmachardware', 'compwindowsx', 'miscforsale', 'recautos',
-                'recmotorcycles', 'recsportbaseball', 'recsporthockey', 'scicrypt'
-    , 'scielectronics', 'scimed', 'scispace', 'socreligionchristian',
-                'talkpoliticsguns', 'talkpoliticsmideast', 'talkpoliticsmisc'
-    , 'talkreligionmisc']
-file_path = Path(path)
-documents = []
-documents_label = []
 label_newsgroups = {
     0: 'alt.atheism.txt',
     1: 'comp.graphics.txt',
@@ -55,74 +36,91 @@ label_newsgroups = {
     19: 'talk.religion.misc.txt'
 }
 
-
-# Courtesy of David Lenz, https://gist.github.com/davidlenz/deff6cc7405d58efa32f4dfe12a6db8b
-def twenty_newsgroup_to_csv(train_or_test):
-    which_split = 'train'
-    if(train_or_test == 1):
-        which_split = 'test'
-    newsgroups_train = fetch_20newsgroups(subset=which_split, remove=('headers', 'footers', 'quotes'))
-
-    df = pd.DataFrame([newsgroups_train.data, newsgroups_train.target.tolist()]).T
-    df.columns = ['text', 'target']
-
-    targets = pd.DataFrame(newsgroups_train.target_names)
-    targets.columns = ['title']
-
-    out = pd.merge(df, targets, left_on='target', right_index=True)
-    out['date'] = pd.to_datetime('now')
-    if (train_or_test == 0):
-        out.to_csv('20_newsgroup_train.csv')
-    else:
-        out.to_csv('20_newsgroup_test.csv')
-
-
-
-def tfidf():
+def tfidf(k_fold, min_df = 3, max_df = 0.95, save_csvs=False):
+    #tfidf - loads k-th fold of newsgroups dataset and appies TFIDF to it:
+        # k_fold - which fold youre selecting
+        # min_df - minimum amount of articles required for a word to be included
+        # max_df - max frequency of a word across articles that is included
+        # save_csvs - set to true to save as CSV
     # load train data
-    newsgroup_data_train = pd.read_csv('20_newsgroup_train.csv')
+    newsgroups_data = fetch_20newsgroups(subset=all, remove=('headers', 'footers', 'quotes'))
+    newsgroups_df = pd.DataFrame([newsgroups_data.data, newsgroups_data.target.tolist()]).T
+    newsgroups_df.columns = ['text', 'target']
+
+    targets = pd.DataFrame(newsgroups_data.target_names)
+    targets.columns = ['title']
+    newsgroups_data = pd.merge(newsgroups_df, targets, left_on='target', right_index=True)
+
+    # k-fold splitting, selecting k_fold
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    train_index, test_index = list(skf.split(newsgroups_data['text'],newsgroups_data['target']))[k_fold]
+
+    # load train/test data
+    newsgroup_data_train = newsgroups_data.iloc[train_index]
     newsgroup_data_train = newsgroup_data_train.dropna(subset=['text'])
-    # load test data
-    newsgroup_data_test = pd.read_csv('20_newsgroup_test.csv')
+    newsgroup_data_test = newsgroups_data.iloc[test_index]
     newsgroup_data_test = newsgroup_data_test.dropna(subset=['text'])
-    # tdif
-    tfidf = TfidfVectorizer(stop_words='english', max_df=0.95, min_df=3);
+
+    # tdif fitting
+    tfidf = TfidfVectorizer(stop_words='english', max_df=max_df, min_df=min_df)
     train_result = tfidf.fit_transform(newsgroup_data_train['text']) # fit on train data
     test_result = tfidf.transform(newsgroup_data_test['text']) #transform on test data
-    # create train data and label
+
+    #forming matrix with words as features
     tfidf_train_data = pd.DataFrame(train_result.toarray(), columns=tfidf.get_feature_names_out())
-    tfidf_train_label = newsgroup_data_train['target']
-    #create test data and label
     tfidf_test_data = pd.DataFrame(test_result.toarray(), columns=tfidf.get_feature_names_out())
-    tfidf_test_label = newsgroup_data_test['target']
+
+    # Get labels
+    tfidf_train_label = newsgroup_data_train['target'].reset_index(drop=True)
+    tfidf_test_label = newsgroup_data_test['target'].reset_index(drop=True)
+
     #save all as CSVs
-    tfidf_train_data.to_csv('tfidf_train_data.csv', index=False)
-    tfidf_train_label.to_csv('tfidf_train_label.csv', index=False)
-    tfidf_test_data.to_csv('tfidf_test_data.csv', index=False)
-    tfidf_test_label.to_csv('tfidf_test_label.csv', index=False)
+    if(save_csvs):
+        tfidf_train_data.to_csv(f"tfidf_train_data_fold{k_fold}.csv")
+        tfidf_test_data.to_csv(f"tfidf_test_data_fold{k_fold}.csv")
+        # tfidf_train_label.to_csv(f"train_label_fold{k_fold}.csv")
+        # tfidf_test_label.to_csv(f"test_label_fold{k_fold}.csv")
 
-    # OPTIONAL print top 10 words by weight
+    return tfidf_train_data,tfidf_train_label,tfidf_test_data,tfidf_test_label
 
-    feature_names = tfidf.get_feature_names_out()
-    top_n = 10
-    i = 0
-    #for doc_idx, doc in enumerate(dense_matrix):
-    #    top_indices = np.argsort(doc)[-top_n:][::-1]
-    #    label = newsgroup_data['title'].iloc[
-    #        doc_idx]
-    #    print(f"\nDocument {doc_idx}, Label {label}:")
+def tfidf_BoW_input(k_fold, min_df=3, max_df=0.95,save_csvs=False):
+    # tfidf - loads k-th fold of BoW data and appies TFIDF to it:
+    # k_fold - which fold youre selecting
+    # min_df - minimum amount of articles required for a word to be included
+    # max_df - max frequency of a word across articles that is included
+    # save_csvs - set to true to save as CSV
 
-        # print top n features for articles
-    #    for idx in top_indices:
-    #        print(f"  {feature_names[idx]}: {doc[idx]}")
-    #create final dataset
-    #['article #','feature_name1',...'feature_name_n','target','title']
-    #tfidf_train_data = pd.DataFrame(dense_matrix,columns = feature_names)
-    #tfidf_train_data['label'] = newsgroup_data['target']
-    #tfidf_train_data.to_csv('tfidf_train_data.csv', index=False)
+    # Load train and test data
+    train = pd.read_csv(f'BoW_train_data_fold{k_fold}.csv')
+    train_label = pd.read_csv(f'BoW_train_label_fold{k_fold}.csv')
+    test = pd.read_csv(f'_fold{k_fold}.csv')
+    test_label = pd.read_csv(f'BoW_test_label_fold{k_fold}.csv')
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    tfidf()
+    # Calculate document frequency (df) for each word
+    word_df = (train > 0).sum(axis=0)  # Counts non-zero entries per column
+    num_articles = train.shape[0]
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    # Identify columns to drop based on min_df and max_df
+    columns_to_drop = train.columns[(word_df < min_df) | (word_df / num_articles > max_df)]
+    train.drop(columns=columns_to_drop, inplace=True)
+    test.drop(columns=columns_to_drop, inplace=True)
+
+    # Calculate TF-IDF for train and test data
+    # Term frequency (TF): divide each element by the row sum
+    tf_train = train.div(train.sum(axis=1), axis=0).fillna(0)
+    tf_test = test.div(test.sum(axis=1), axis=0).fillna(0)
+
+    # Inverse document frequency (IDF): log(N / df)
+    idf = np.log(num_articles / (word_df + 1))  # Adding 1 for smoothing
+    idf = idf.loc[train.columns]  # Ensure alignment after dropping columns
+
+    # Compute TF-IDF: element-wise multiplication
+    tfidf_train = tf_train * idf
+    tfidf_test = tf_test * idf
+
+    # save data as csv
+    if(save_csvs):
+        tfidf_train.to_csv(f"tfidfBoW_train_data_fold{k_fold}.csv")
+        tfidf_test.to_csv(f"tfidfBoW_test_data_fold{k_fold}.csv")
+
+    return tfidf_train,train_label,tfidf_test, test_label
