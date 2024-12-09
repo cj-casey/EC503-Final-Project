@@ -29,7 +29,7 @@ label_newsgroups = {
 }
 
 
-def tfidf(k_fold, min_df=0.01, max_df=0.9, save_csvs=False, realistc=False):
+def tfidf(k_fold, min_df=0.01, max_df=0.9, save_csvs=False, metadata='realistic'):
 
     # tfidf - loads k-th fold of newsgroups dataset and applies TFIDF to it:
     # k_fold - which fold you're selecting
@@ -39,10 +39,16 @@ def tfidf(k_fold, min_df=0.01, max_df=0.9, save_csvs=False, realistc=False):
     # realistic - removes metadata
 
     # load train data
+
+    if(metadata == 'realistic'):
+        newsgroups_data = fetch_20newsgroups(subset='all',remove=('footers',))
+    elif(metadata == 'all'):
+        newsgroups_data = fetch_20newsgroups(subset='all')
+    else:
+        newsgroups_data = fetch_20newsgroups(subset='all',remove=('footers','headers','quotes'))
     # Courtesy of David Lenz, https://gist.github.com/davidlenz/deff6cc7405d58efa32f4dfe12a6db8b
     # he developed a function to read 20newsgroups and process it in a certain way and I integrated it with my code
     # beginning of heavily inspired code
-    newsgroups_data = fetch_20newsgroups(subset='all')
     newsgroups_df = pd.DataFrame([newsgroups_data.data, newsgroups_data.target.tolist()]).T
     newsgroups_df.columns = ['text', 'target']
 
@@ -50,6 +56,7 @@ def tfidf(k_fold, min_df=0.01, max_df=0.9, save_csvs=False, realistc=False):
     targets.columns = ['title']
     newsgroups_data = pd.merge(newsgroups_df, targets, left_on='target', right_index=True)
     # end of heavily inspired code
+
     # ensure target is ints?
     newsgroups_data['target'] = newsgroups_data['target'].astype(int)
 
