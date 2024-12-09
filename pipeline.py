@@ -32,11 +32,12 @@ def main(args):
         #call BoW -> tfidf_BoW_input or BoW or tfidf() based on settings
         if(args.nlp == 'bow_tfidf'):
             train_data,train_label,test_data,test_label = BoW(cv_fold,args.dataset)
-            train_data, train_label, test_data, test_label = tfidf_BoW_input(cv_fold, args.dataset)
+            train_data, train_label, test_data, test_label = tfidf_BoW_input(cv_fold, min_df=min_df,
+                                                               max_df=max_df, save_csvs=False))
         elif(args.nlp == 'bow'):
-            train_data, train_label, test_data, test_label = BoW(cv_fold, args.dataset)
+            train_data, train_label, test_data, test_label = BoW(cv_fold)
         elif(args.nlp == 'tfidf'):
-            train_data, train_label, test_data, test_label = tfidf(cv_fold, args.dataset, min_df=min_df,
+            train_data, train_label, test_data, test_label = tfidf(cv_fold, min_df=min_df,
                                                                max_df=max_df, save_csvs=False)
         else:
             print("Error: No NLP Method Entered")
