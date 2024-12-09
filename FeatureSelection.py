@@ -4,10 +4,10 @@ from joblib import parallel_backend
 
 # Options and Hyperparameters
 k = 100  # Number of features to select
-testrun = False # Set to true if you only want to import the first 50 rows of data (for script testing purposes)
+testrun = True # Set to true if you only want to import the first 50 rows of data (for script testing purposes)
 
-feature_files = ['tfidf_train_data_fold0.csv', ]
-label_files = ['train_label_fold0.csv', ]
+feature_files = ['tfidf_train_data_fold0.csv', 'BoW_train_data_fold0.csv', "tfidfBoW_train_data_fold0.csv" ]
+label_files = ['train_label_fold0.csv', 'BoW_train_label_fold0.csv', "train_label_fold0.csv" ]
 
 for feature_file, label_file in zip(feature_files, label_files):
     # Load the features and labels
