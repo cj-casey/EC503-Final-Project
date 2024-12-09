@@ -1,29 +1,29 @@
-import pandas as pd
+# drunken monologues, confused because
+# its not like im falling in love,
+# i just want you to do me no good
+# and it looks like you could
+
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix
-import joblib
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
 
-#loading training and testing data
-X_train = pd.read_csv('transformed_data.csv')
-Ytrain_temp_df = pd.read_csv('tfidf_train_label.csv')
+def rfc(fs_train_data, train_label, fs_test_data, test_label):
+    
+    #note, although n is a hyperparemeter, we will let n = 100 for testing. the random state is arbitrary
+    # and we will use 42 (the meaning of life) to reproduce results. 
 
+    clf = RandomForestClassifier(n_estimators = 100, random_state = 42)
+    clf.fit(fs_train_data, train_label)
 
-Y_train = Ytrain_temp_df.to_numpy()
-Y_train = Y_train.ravel()
+    y_train_pred = clf.predict(fs_train_data)
 
-del Ytrain_temp_df  
+    train_ccr = accuracy_score(train_label, y_train_pred) 
+    train_f1_score = f1_score(train_label, y_train_pred)
+    train_conf_mat = confusion_matrix(train_label, y_train_pred)
 
+    y_test_pred = clf.predict(fs_test_data)
 
-clf = RandomForestClassifier(n_estimators = 100, random_state = 42)
-clf.fit(X_train, Y_train)
+    test_ccr = accuracy_score(test_label, y_test_pred)
+    test_f1_score = f1_score(test_label, y_test_pred)
+    test_conf_mat = confusion_matrix(test_label, y_test_pred)
 
-joblib.dump(clf,'RFC_decision.pkl')
-
-#Make predictions
-y_train_pred = clf.predict(X_train)
-
-training_CCR = accuracy_score(y_train_pred,Y_train)
-confmat_train = confusion_matrix(y_train_pred, Y_train)
-
-print("----------Random Forest Classifier TRAINING RESULTS----------")
-print(f"Training Accuracy: {training_CCR:.4f}")
+    return train_ccr, train_f1_score, train_conf_mat, test_ccr, test_f1_score, test_conf_mat
