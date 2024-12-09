@@ -29,23 +29,27 @@ label_newsgroups = {
 }
 
 
-def tfidf(k_fold, min_df=3, max_df=0.95, save_csvs=False):
+def tfidf(k_fold, min_df=0.01, max_df=0.9, save_csvs=False, realistc=False):
 
     # tfidf - loads k-th fold of newsgroups dataset and applies TFIDF to it:
     # k_fold - which fold you're selecting
     # min_df - minimum amount of articles required for a word to be included
     # max_df - max frequency of a word across articles that is included
     # save_csvs - set to true to save as CSV
+    # realistic - removes metadata
 
     # load train data
-    newsgroups_data = fetch_20newsgroups(subset='all', remove=('headers', 'footers', 'quotes'))
+    # Courtesy of David Lenz, https://gist.github.com/davidlenz/deff6cc7405d58efa32f4dfe12a6db8b
+    # he developed a function to read 20newsgroups and process it in a certain way and I integrated it with my code
+    # beginning of heavily inspired code
+    newsgroups_data = fetch_20newsgroups(subset='all')
     newsgroups_df = pd.DataFrame([newsgroups_data.data, newsgroups_data.target.tolist()]).T
     newsgroups_df.columns = ['text', 'target']
 
     targets = pd.DataFrame(newsgroups_data.target_names)
     targets.columns = ['title']
     newsgroups_data = pd.merge(newsgroups_df, targets, left_on='target', right_index=True)
-
+    # end of heavily inspired code
     # ensure target is ints?
     newsgroups_data['target'] = newsgroups_data['target'].astype(int)
 
@@ -60,7 +64,8 @@ def tfidf(k_fold, min_df=3, max_df=0.95, save_csvs=False):
     newsgroup_data_test = newsgroup_data_test.dropna(subset=['text'])
 
     # tfidf fitting
-    tfidf_model = TfidfVectorizer(stop_words='english', max_df=max_df, min_df=min_df)
+    # tfidf_model = TfidfVectorizer(stop_words='english',ngram_range =(1,2), max_df=max_df, min_df=min_df,use_idf=True)
+    tfidf_model = TfidfVectorizer(stop_words='english',max_features = 5000, min_df = min_df, max_df = max_df)
     train_result = tfidf_model.fit_transform(newsgroup_data_train['text']) # fit on train data
     test_result = tfidf_model.transform(newsgroup_data_test['text']) #transform on test data
 
@@ -75,6 +80,9 @@ def tfidf(k_fold, min_df=3, max_df=0.95, save_csvs=False):
     #save all as CSVs
     print("Train Data Shape", tfidf_train_data.shape)
     print("Train label shape",tfidf_train_label.shape )
+    print("Test Data Shape", tfidf_test_data.shape)
+    print("Test label shape", tfidf_test_label.shape)
+
     if(save_csvs):
         tfidf_train_data.to_csv(f"tfidf_train_data_fold{k_fold}.csv")
         tfidf_test_data.to_csv(f"tfidf_test_data_fold{k_fold}.csv")
@@ -83,7 +91,7 @@ def tfidf(k_fold, min_df=3, max_df=0.95, save_csvs=False):
 
     return tfidf_train_data,tfidf_train_label,tfidf_test_data,tfidf_test_label
 
-def tfidf_BoW_input(k_fold, min_df=3, max_df=0.95,save_csvs=False):
+def tfidf_BoW_input(k_fold, dataset, min_df=3, max_df=0.95,save_csvs=False):
     # tfidf - loads k-th fold of BoW data and appies TFIDF to it:
     # k_fold - which fold you're selecting
     # min_df - minimum amount of articles required for a word to be included
@@ -132,11 +140,11 @@ def tfidf_BoW_input(k_fold, min_df=3, max_df=0.95,save_csvs=False):
 if __name__ == "__main__":
     choice = "1"
     k_fold = 0
-    min_df = 3
-    max_df = 0.95
-    save_csvs = False
+    min_df = 100
+    max_df = 1500
+    save_csvs = True
     if choice == "1":
-        tfidf(k_fold, min_df, max_df, save_csvs)
+        tfidf(k_fold,min_df = min_df, max_df = max_df, save_csvs = save_csvs)
     elif choice == "2":
         tfidf_BoW_input(k_fold, min_df, max_df, save_csvs)
     else:
