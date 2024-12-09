@@ -93,7 +93,7 @@ def tfidf_BoW_input(k_fold, min_df=3, max_df=0.95,save_csvs=False):
     # Load train and test data
     train = pd.read_csv(f'BoW_train_data_fold{k_fold}.csv')
     train_label = pd.read_csv(f'BoW_train_label_fold{k_fold}.csv')
-    test = pd.read_csv(f'_fold{k_fold}.csv')
+    test = pd.read_csv(f'BoW_test_data_fold{k_fold}.csv')
     test_label = pd.read_csv(f'BoW_test_label_fold{k_fold}.csv')
 
     # Calculate document frequency (df) for each word
@@ -123,6 +123,8 @@ def tfidf_BoW_input(k_fold, min_df=3, max_df=0.95,save_csvs=False):
     if(save_csvs):
         tfidf_train.to_csv(f"tfidfBoW_train_data_fold{k_fold}.csv")
         tfidf_test.to_csv(f"tfidfBoW_test_data_fold{k_fold}.csv")
+        train_label.to_csv(f"train_label_fold{k_fold}.csv")
+        test_label.to_csv(f"test_label_fold{k_fold}.csv")
 
     return tfidf_train,train_label,tfidf_test, test_label
 
