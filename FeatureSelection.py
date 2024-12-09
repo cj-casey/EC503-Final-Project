@@ -146,7 +146,6 @@ def mutual_info_selection(nlp, features, labels, test_features, test_labels, top
     print(f"Feature Selection using Mutual Information for {nlp} completed successfully!")
 
 
-# Adjustments in main
 if __name__ == "__main__":
     k = 100
     testrun = False
