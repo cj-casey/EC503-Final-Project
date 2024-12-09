@@ -5,13 +5,13 @@ import numpy as np
 from FeatureSelection import chi_squared_selection, mutual_info_selection
 from SVM_decision import svm
 from RFC_decision import rfc
-from XGB_decision import xgb
+from NB_decision import nb
 
 def main(args):
     # settings
     # nlp = 'bow_tfidf','bow','tfidf'
     # fs = 'chi_square','mutual_info'
-    # model = 'svm','rfc','xgb'
+    # model = 'svm','rfc', 'nb'
     # dataset = '20news', addmore.....
     # hyperparameters
     min_df = args.min_df # min df for tfidf
@@ -32,22 +32,20 @@ def main(args):
         #call BoW -> tfidf_BoW_input or BoW or tfidf() based on settings
         if(args.nlp == 'bow_tfidf'):
             train_data,train_label,test_data,test_label = BoW(cv_fold,args.dataset)
-            train_data, train_label, test_data, test_label = tfidf_BoW_input(cv_fold, min_df=min_df,
-                                                               max_df=max_df, save_csvs=False))
+            train_data, train_label, test_data, test_label = tfidf_BoW_input(cv_fold, min_df=min_df, max_df=max_df, save_csvs=False)
         elif(args.nlp == 'bow'):
             train_data, train_label, test_data, test_label = BoW(cv_fold)
         elif(args.nlp == 'tfidf'):
-            train_data, train_label, test_data, test_label = tfidf(cv_fold, min_df=min_df,
-                                                               max_df=max_df, save_csvs=False)
+            train_data, train_label, test_data, test_label = tfidf(cv_fold, min_df=min_df, max_df=max_df, save_csvs=False)
         else:
             print("Error: No NLP Method Entered")
             exit(-1)
 
         #call chi-square or mutual information based on settings
         if(args.fs =='chi_square'):
-            fs_train_data,fs_test_data = chi_squared_selection(nlp, train_data, train_label, test_data, test_label, k)
+            fs_train_data,fs_test_data = chi_squared_selection(nlp, fold_no, train_data, train_label, test_data, test_label, k)
         elif(args.fs =='mutual_info'):
-            fs_train_data, fs_test_data = mutual_info_selection(nlp, train_data, train_label, test_data, test_label, k)
+            fs_train_data, fs_test_data = mutual_info_selection(nlp, fold_no, train_data, train_label, test_data, test_label, k)
         else:
             print("Error: No Feature Selection Method Entered")
             exit(-1)
@@ -56,8 +54,8 @@ def main(args):
             train_ccr[cv_fold],train_f1_score[cv_fold],train_conf_mat[cv_fold],test_ccr[cv_fold],test_f1_score[cv_fold],test_conf_mat[cv_fold] = svm(fs_train_data,train_label,fs_test_data,test_label,gamma=gamma, c=c)
         elif(args.model == 'rfc'):
             train_ccr[cv_fold],train_f1_score[cv_fold],train_conf_mat[cv_fold],test_ccr[cv_fold],test_f1_score[cv_fold],test_conf_mat[cv_fold] = rfc(fs_train_data, train_label, fs_test_data, test_label)
-        elif(args.model =='xgb'):
-            train_ccr[cv_fold],train_f1_score[cv_fold],train_conf_mat[cv_fold],test_ccr[cv_fold],test_f1_score[cv_fold],test_conf_mat[cv_fold] = xgb(fs_train_data, train_label, fs_test_data, test_label)
+        elif(args.model == 'nb'):
+            train_ccr[cv_fold],train_f1_score[cv_fold],train_conf_mat[cv_fold],test_ccr[cv_fold],test_f1_score[cv_fold],test_conf_mat[cv_fold] = nb(fs_train_data, train_label, fs_test_data, test_label)
         else:
             print("Error: No Model Entered")
             exit(-1)
