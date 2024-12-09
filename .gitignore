@@ -4,3 +4,8 @@
 /tfidf_test_data.csv
 /tfidf_train_data.csv
 /tfidf_test_label.csv
+/tfidf_train_data_fold0.csv
+/tfidf_test_data_fold0.csv
+/__pycache__
+/test_label_fold0.csv
+/train_label_fold0.csv
