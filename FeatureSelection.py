@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.feature_selection import chi2, SelectKBest, mutual_info_classif
 from joblib import parallel_backend
 
-def chi_squared_selection(nlp, fold_no, features, labels, test_features, test_labels, topk):
+def chi_squared_selection(nlp, fold_no, features, labels, test_features, test_labels, topk, save_csvs):
     print(f"Feature Selection using Chi-Squared for {nlp} fold no. {fold_no}...")
 
     # Save feature column names
@@ -64,19 +64,19 @@ def chi_squared_selection(nlp, fold_no, features, labels, test_features, test_la
 
     # Save transformed training data
     transformed_data = pd.DataFrame(chi2_selected_features, columns=selected_words)
-    transformed_data.to_csv(f"{nlp}_fold_{fold_no}_transformed_train_data_chi_squared.csv", index=False)
+    if save_csvs: transformed_data.to_csv(f"{nlp}_fold_{fold_no}_transformed_train_data_chi_squared.csv", index=False)
     print("Transformed Chi-Squared training dataset saved successfully!")
 
     # Save transformed test data
     transformed_test_data = pd.DataFrame(test_features_selected, columns=selected_words)
-    transformed_test_data.to_csv(f"{nlp}_fold_{fold_no}_transformed_test_data_chi_squared.csv", index=False)
+    if save_csvs: transformed_test_data.to_csv(f"{nlp}_fold_{fold_no}_transformed_test_data_chi_squared.csv", index=False)
     print("Transformed Chi-Squared test dataset saved successfully!")
 
     print(f"Feature Selection using Chi-Squared for {nlp} fold {fold_no} completed successfully!")
     return transformed_data, transformed_test_data
 
 
-def mutual_info_selection(nlp, fold_no, features, labels, test_features, test_labels, topk):
+def mutual_info_selection(nlp, fold_no, features, labels, test_features, test_labels, topk, save_csvs):
     print(f"Feature Selection using Mutual Information for {nlp} fold no. {fold_no}...")
 
     # Save feature column names
@@ -136,12 +136,12 @@ def mutual_info_selection(nlp, fold_no, features, labels, test_features, test_la
 
     # Save transformed training data
     transformed_data = pd.DataFrame(mi_selected_features, columns=selected_words)
-    transformed_data.to_csv(f"{nlp}_fold_{fold_no}_transformed_train_data_mutual_info.csv", index=False)
+    if save_csvs: transformed_data.to_csv(f"{nlp}_fold_{fold_no}_transformed_train_data_mutual_info.csv", index=False)
     print("Transformed Mutual Information training dataset saved successfully!")
 
     # Save transformed test data
     transformed_test_data = pd.DataFrame(test_features_selected, columns=selected_words)
-    transformed_test_data.to_csv(f"{nlp}_fold_{fold_no}_transformed_test_data_mutual_info.csv", index=False)
+    if save_csvs: transformed_test_data.to_csv(f"{nlp}_fold_{fold_no}_transformed_test_data_mutual_info.csv", index=False)
     print("Transformed Mutual Information test dataset saved successfully!")
 
     print(f"Feature Selection using Mutual Information for {nlp} fold no. {fold_no} completed successfully!")
