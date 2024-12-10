@@ -46,6 +46,9 @@ def pipeline(nlp, fs, model, dataset='20news', min_df=3, max_df=0.95, c=1, gamma
             fs_train_data,fs_test_data = chi_squared_selection(nlp, cv_fold, train_data, train_label, test_data, test_label, k, False)
         elif(fs =='mutual_info'):
             fs_train_data, fs_test_data = mutual_info_selection(nlp, cv_fold, train_data, train_label, test_data, test_label, k, False)
+        elif(fs == 'no_feature_selection'):
+            fs_train_data = train_data
+            fs_test_data = test_data
         else:
             print("Error: No Feature Selection Method Entered")
             exit(-1)
@@ -85,7 +88,8 @@ def pipeline(nlp, fs, model, dataset='20news', min_df=3, max_df=0.95, c=1, gamma
 
 if __name__ == "__main__":
     nlp_methods = ['tfidf']
-    fs_methods = ['chi_square', 'mutual_info']
+    # fs_methods = ['chi_square', 'mutual_info']
+    fs_methods = ['no_feature_selection']
     model_methods = ['svm', 'rfc', 'nb']
 
     for nlp in nlp_methods:
