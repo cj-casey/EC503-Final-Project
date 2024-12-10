@@ -17,13 +17,13 @@ def rfc(fs_train_data, train_label, fs_test_data, test_label):
     y_train_pred = clf.predict(fs_train_data)
 
     train_ccr = accuracy_score(train_label, y_train_pred) 
-    train_f1_score = f1_score(train_label, y_train_pred)
+    train_f1_score = f1_score(train_label, y_train_pred, average='weighted')
     train_conf_mat = confusion_matrix(train_label, y_train_pred)
 
     y_test_pred = clf.predict(fs_test_data)
 
     test_ccr = accuracy_score(test_label, y_test_pred)
-    test_f1_score = f1_score(test_label, y_test_pred)
+    test_f1_score = f1_score(test_label, y_test_pred, average='weighted')
     test_conf_mat = confusion_matrix(test_label, y_test_pred)
 
     return train_ccr, train_f1_score, train_conf_mat, test_ccr, test_f1_score, test_conf_mat

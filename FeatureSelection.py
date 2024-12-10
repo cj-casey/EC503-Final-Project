@@ -27,9 +27,9 @@ def chi_squared_selection(nlp, fold_no, features, labels, test_features, test_la
         print("Test labels converted to integers successfully!")
 
     # Flatten labels to 1D
-    labels = labels.iloc[:, 1]
+    # labels = labels.iloc[:, 1]
     labels = labels.values.ravel()
-    test_labels = test_labels.iloc[:, 1]
+    # test_labels = test_labels.iloc[:, 1]
     test_labels = test_labels.values.ravel()
     print("Labels reshaped to 1D successfully!")
 
@@ -73,6 +73,7 @@ def chi_squared_selection(nlp, fold_no, features, labels, test_features, test_la
     print("Transformed Chi-Squared test dataset saved successfully!")
 
     print(f"Feature Selection using Chi-Squared for {nlp} fold {fold_no} completed successfully!")
+    return transformed_data, transformed_test_data
 
 
 def mutual_info_selection(nlp, fold_no, features, labels, test_features, test_labels, topk):
@@ -99,9 +100,9 @@ def mutual_info_selection(nlp, fold_no, features, labels, test_features, test_la
         print("Test labels converted to integers successfully!")
 
     # Flatten labels to 1D
-    labels = labels.iloc[:, 1]
+    # labels = labels.iloc[:, 1]
     labels = labels.values.ravel()
-    test_labels = test_labels.iloc[:, 1]
+    # test_labels = test_labels.iloc[:, 1]
     test_labels = test_labels.values.ravel()
     print("Labels reshaped to 1D successfully!")
 
@@ -144,6 +145,8 @@ def mutual_info_selection(nlp, fold_no, features, labels, test_features, test_la
     print("Transformed Mutual Information test dataset saved successfully!")
 
     print(f"Feature Selection using Mutual Information for {nlp} fold no. {fold_no} completed successfully!")
+    return transformed_data, transformed_test_data
+
 
 
 if __name__ == "__main__":

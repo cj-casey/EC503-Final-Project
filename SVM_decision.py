@@ -6,22 +6,22 @@
 from sklearn.svm import SVC 
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
 
-def svm(fs_train_data, train_label, fs_test_data, test_label, gamma = 0.5, c = 1):
+def svm(fs_train_data, train_label, fs_test_data, test_label, my_gamma = 0.5, my_c = 1):
     
-    clf = SVC(kernel = 'rbf', gamma = gamma, c = c) #surely this doesn't complain. surely
+    clf = SVC(kernel = 'rbf', gamma = my_gamma, C = my_c) #surely this doesn't complain. surely
     clf.fit(fs_train_data, train_label)
 
     y_train_pred = clf.predict(fs_train_data)
 
 
     train_ccr = accuracy_score(train_label, y_train_pred) 
-    train_f1_score = f1_score(train_label, y_train_pred)
+    train_f1_score = f1_score(train_label, y_train_pred, average='weighted')
     train_conf_mat = confusion_matrix(train_label, y_train_pred)
 
     y_test_pred = clf.predict(fs_test_data)
 
     test_ccr = accuracy_score(test_label, y_test_pred)
-    test_f1_score = f1_score(test_label, y_test_pred)
+    test_f1_score = f1_score(test_label, y_test_pred, average='weighted')
     test_conf_mat = confusion_matrix(test_label, y_test_pred)
 
     return train_ccr, train_f1_score, train_conf_mat, test_ccr, test_f1_score, test_conf_mat
