@@ -29,7 +29,11 @@ Implemented with scikit-learn. No hyperparameters set. Black box function utiliz
 
 ## Guide to Use
 ### Data Formatting
-Can be used with any time of text classification, reading in labelled tabular data. 
+Can be used with any time of text classification, reading in labelled tabular data.    
+
+The data gets preprocessed by having stop words (commonly used English words) and special character (&, -, etc.) removed, as they can inhibit the ability of the dataset to be analyzed. As such, they are removed by the NLP techniques, before the data gets tabularized.     
+Human text data is very unstructured, and incredibly difficult for a model to read and analyze, as there are many nuances that exist within human langauge, especially English. As such, the goal is to create a more structured dataset, which is easier for a model to read and make predictions from. 
+
 ### Hyperparameters
 Min_DF
 Max_DF
