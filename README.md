@@ -1,6 +1,9 @@
 # EC503 Final Project
 ## By Loren Moreira, Alex Melnick, Bogdan Sadikovic, and Connor Casey
 # A Study and Analysis of Different Models and NLP Techniques for Supervised News Classification
+
+## Datasets
+|We utilized the 20newsgroup dataset which is available through scikitlearn, and the clickbait dataset which is available here https://huggingface.co/datasets/christinacdl/clickbait_detection_dataset
 ## Pipeline Architecture
 ### NLP
 Our pipeline supports three NLP feature extraction settings, Bag of Words, TF-IDF, or Both.
