@@ -36,6 +36,20 @@ Max_DF
 K_Top_Features
 gamma
 ### NLP Technique Selection
+Bag of Words (BoW):
+The BoW program takes in a dataset to read. It initially pre-processes the data, by removing stop words, and removing any special, non alphabetical characters from the dataset. It then creates a vocabulary of all the words, and then goes through the entire dataset, and checks which words from the vocabulary are being used in each article, and how many times they appear. It then takes all that information, and tabularizes it, with the following format:
+
+article_name | word_1     | word_2     | word_3     | ...
+article_num  | word_1_cnt | word_2_cnt | word_3_cnt | ...
+.
+.
+The goal is to create sparse, structured data that can be used by other techniques to get more processed data that is easier to read and analyze by other programs. 
+
+
+TF-IDF:
+TF-IDF also pre-processes the data, and removes any stop words or strange characters from its reading. It creates a TF-IDF vectorizer, which does so, along with establishing the maximum DF as 0.95 (Ignores if appears in >95% of words) and the minimum DF as 3(Ignores if <3 words). It then creates a sprace matrix. The goal is to create a sparce matrix that shows the importance of different terms, which allows for better analysis of the data in a structured format. 
+
+
 
 ### Feature Selections
 Both Chi-Squared and Mutual Information are available for feature selection using the FeatureSelection.py class. The class is currently set up for use in pipeline.py with Bag of Words. If you want to run it on TF-IDF, you will need to comment out and uncomment a few lines. Specifically, comment out lines 31, 34, 114, and 116. Uncomment lines 33, 35, 113, and 117. 
