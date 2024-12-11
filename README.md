@@ -10,6 +10,11 @@ Bag of Words is implemented by - Bogdan all you
 TF-IDF standalone is implemented using the TFIDF vectorizer from Sci-Kit Learn. By default it utilizes
 the values of min_df = 3 and max_df = 0.95. This ensure that words are included 
 ### Feature Selection
+## Chi-Squared
+Implemented with scikit-learn. The chi-squared test is used to determine the independence of two events. In this case, the chi-squared test is used to determine the independence of the word features and newsgroup labels. The test utilizes the k hyperparameter, where the features with the k highest Chi-Squared scores are selected. 
+
+## Mutual Information
+Implemented with scikit-learn. The mutual information test is used to determine the mutual information between two events. In this case, the mutual information test is used to determine the mutual information between the word features and newsgroup labels. The test utilizes the k hyperparameter, where the features with the k highest mutual information scores are selected.
 
 ### Model (SVM, Random Forest, Multinomial Naive Bayes)
 ## SVM
@@ -32,3 +37,5 @@ K_Top_Features
 gamma
 ### NLP Technique Selection
 
+### Feature Selections
+Both Chi-Squared and Mutual Information are available for feature selection using the FeatureSelection.py class. The class is currently set up for use in pipeline.py with Bag of Words. If you want to run it on TF-IDF, you will need to comment out and uncomment a few lines. Specifically, comment out lines 31, 34, 114, and 116. Uncomment lines 33, 35, 113, and 117. 
