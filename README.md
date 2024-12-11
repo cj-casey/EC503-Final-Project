@@ -38,7 +38,7 @@ Human text data is very unstructured, and incredibly difficult for a model to re
 Min_DF
 Max_DF
 K_Top_Features
-gamma
+Gamma
 ### NLP Technique Selection
 Bag of Words (BoW):
 The BoW program takes in a dataset to read. It initially pre-processes the data, by removing stop words, and removing any special, non alphabetical characters from the dataset. It then creates a vocabulary of all the words, and then goes through the entire dataset, and checks which words from the vocabulary are being used in each article, and how many times they appear. It then takes all that information, and tabularizes it. The goal is to create sparse, structured data that can be used by other techniques to get more processed data that is easier to read and analyze by other programs. 
