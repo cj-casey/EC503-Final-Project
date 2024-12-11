@@ -9,3 +9,5 @@
 /__pycache__
 /test_label_fold0.csv
 /train_label_fold0.csv
+/bag_of_words_test.csv
+/bag_of_words_train.csv

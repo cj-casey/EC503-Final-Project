@@ -2,6 +2,7 @@ import argparse
 # from NLP_BoW import BoW
 from tfidf import tfidf,tfidf_BoW_input
 import numpy as np
+import pandas as pd
 from FeatureSelection import chi_squared_selection, mutual_info_selection
 from SVM_decision import svm
 from RFC_decision import rfc
@@ -28,13 +29,31 @@ def pipeline(nlp, fs, model, dataset='20news', min_df=3, max_df=0.95, c=1, gamma
     test_ccr = []
     test_f1_score = []
     test_conf_mat = []
+
+    # Load the data
+    if(nlp == 'bow'):
+        # Load training data
+        train_data = pd.read_csv("bag_of_words_train.csv")
+        test_data = pd.read_csv("bag_of_words_test.csv")
+
+        train_label = train_data['article_name']
+        test_label = test_data['article_name']
+
+        train_data = train_data.fillna(0)
+        test_data = test_data.fillna(0)
+        train_label = train_label.fillna(0)
+        test_label = test_label.fillna(0)
+
+        print("Train Data Shape:", train_data.shape)
+        print("Train Label Shape:", train_label.shape)
+        print("Test Data Shape:", test_data.shape)
+        print("Test Label Shape:", test_label.shape)
+
     for cv_fold in range(0,4):
-        #call BoW -> tfidf_BoW_input or BoW or tfidf() based on settings
-        if(nlp == 'bow_tfidf'):
-            train_data,train_label,test_data,test_label = BoW(cv_fold,dataset)
-            train_data, train_label, test_data, test_label = tfidf_BoW_input(cv_fold, min_df=min_df, max_df=max_df, save_csvs=False)
-        elif(nlp == 'bow'):
-            train_data, train_label, test_data, test_label = BoW(cv_fold)
+        if(nlp == 'bow'):
+            if(cv_fold != 3):
+                print(f"Skipping iteration {cv_fold} for BoW")
+                continue
         elif(nlp == 'tfidf'):
             train_data, train_label, test_data, test_label = tfidf(cv_fold, min_df=min_df, max_df=max_df, save_csvs=False)
         else:
@@ -87,9 +106,9 @@ def pipeline(nlp, fs, model, dataset='20news', min_df=3, max_df=0.95, c=1, gamma
         f.write("\n")
 
 if __name__ == "__main__":
-    nlp_methods = ['tfidf']
-    # fs_methods = ['chi_square', 'mutual_info']
-    fs_methods = ['no_feature_selection']
+    nlp_methods = ['bow']
+    fs_methods = ['chi_square', 'mutual_info']
+    # fs_methods = ['no_feature_selection']
     model_methods = ['svm', 'rfc', 'nb']
 
     for nlp in nlp_methods:

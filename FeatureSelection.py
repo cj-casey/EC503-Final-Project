@@ -28,10 +28,18 @@ def chi_squared_selection(nlp, fold_no, features, labels, test_features, test_la
 
     # Flatten labels to 1D
     # labels = labels.iloc[:, 1]
-    labels = labels.values.ravel()
+    labels = labels.ravel()
+    # labels = labels.values.ravel()
     # test_labels = test_labels.iloc[:, 1]
-    test_labels = test_labels.values.ravel()
+    test_labels = test_labels.ravel()
+    # test_labels = test_labels.values.ravel()
+    
     print("Labels reshaped to 1D successfully!")
+
+    print(f"Features Shape: {features.shape}")        
+    print(f"Features Type: {type(features)}, Labels Type: {type(labels)}")
+    print(f"Labels Shape: {labels.shape}")
+    print(f"Labels Unique Values: {np.unique(labels)}")
 
     # Compute Chi-Squared scores
     print("Computing Chi-Squared scores...")
@@ -73,6 +81,7 @@ def chi_squared_selection(nlp, fold_no, features, labels, test_features, test_la
     print("Transformed Chi-Squared test dataset saved successfully!")
 
     print(f"Feature Selection using Chi-Squared for {nlp} fold {fold_no} completed successfully!")
+
     return transformed_data, transformed_test_data
 
 
@@ -101,9 +110,11 @@ def mutual_info_selection(nlp, fold_no, features, labels, test_features, test_la
 
     # Flatten labels to 1D
     # labels = labels.iloc[:, 1]
-    labels = labels.values.ravel()
+    # labels = labels.values.ravel()
+    labels = labels.ravel()
     # test_labels = test_labels.iloc[:, 1]
-    test_labels = test_labels.values.ravel()
+    test_labels = test_labels.ravel()
+    # test_labels = test_labels.values.ravel()
     print("Labels reshaped to 1D successfully!")
 
     # Compute Mutual Information scores
@@ -151,7 +162,7 @@ def mutual_info_selection(nlp, fold_no, features, labels, test_features, test_la
 
 if __name__ == "__main__":
     k = 100
-    testrun = False
+    testrun = True
 
     train_feature_files = ['tfidf_train_data_fold0.csv']
     train_label_files = ['train_label_fold0.csv']
@@ -166,11 +177,11 @@ if __name__ == "__main__":
         test_labels = pd.read_csv(test_label, nrows=50 if testrun else None)
         print("Data loaded successfully!")
 
-        print(f"Features Shape: {features.shape}")
-        print(f"Labels Shape: {labels.shape}")
+        print(f"Features Shape: {features.shape}")        
         print(f"Features Type: {type(features)}, Labels Type: {type(labels)}")
+        print(f"Labels Shape: {labels.shape}")
         print(f"Labels Unique Values: {np.unique(labels)}")
 
 
-        chi_squared_selection(train_feat[:-4], features, labels, test_features, test_labels, k)
-        mutual_info_selection(train_feat[:-4], features, labels, test_features, test_labels, k)
+        chi_squared_selection(train_feat[:-4], 0, features, labels, test_features, test_labels, k, False)
+        mutual_info_selection(train_feat[:-4], 0, features, labels, test_features, test_labels, k, False)
