@@ -39,8 +39,8 @@ gamma
 Bag of Words (BoW):
 The BoW program takes in a dataset to read. It initially pre-processes the data, by removing stop words, and removing any special, non alphabetical characters from the dataset. It then creates a vocabulary of all the words, and then goes through the entire dataset, and checks which words from the vocabulary are being used in each article, and how many times they appear. It then takes all that information, and tabularizes it, with the following format:
 
-article_name | word_1     | word_2     | word_3     | ...
-article_num  | word_1_cnt | word_2_cnt | word_3_cnt | ...
+article_name | word_1     | word_2     | word_3     | ...\n
+article_num  | word_1_cnt | word_2_cnt | word_3_cnt | ...\n
 .
 .
 The goal is to create sparse, structured data that can be used by other techniques to get more processed data that is easier to read and analyze by other programs. 
