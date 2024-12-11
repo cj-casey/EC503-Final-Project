@@ -10,7 +10,17 @@ Bag of Words is implemented by - Bogdan all you
 TF-IDF standalone is implemented using the TFIDF vectorizer from Sci-Kit Learn. By default it utilizes
 the values of min_df = 3 and max_df = 0.95. This ensure that words are included 
 ### Feature Selection
-### Model (SVM, Randomforest)
+
+### Model (SVM, Random Forest, Multinomial Naive Bayes)
+## SVM
+An RBF-Kernel is used alongside SVM, with a hyperparameter gamma which is set to 0.5 by default. The runtime complexity is denoted to be *O(nSV x d)* where nSV denotes the number of support vectors, and d denotes the dimension of the dataset. Implemented with scikit-learn. 
+
+## Random Forest
+Implemented with scikit-learn. Let n_estimators = 100 and random_state = 42 (the meaning of life), with no specifics otherwise for the rest of the hyperparameters. A test with a small subset of the original data did not show alterations in the testing/training CCR for changes in the other hyperparameters that can be set in the black box random forest classifier. 
+
+## Multinomial Naive Bayes
+Implemented with scikit-learn. No hyperparameters set. Black box function utilizes Laplace Smoothing to handle missing terms. The algorithm relates the conditional probabilities of events utilizing Bayes’ Theorem. Assumes that features are conditionally independent of each other, chooses class of highest posterior probability, which is chosen by multiplying the prior probability by the probability of the class.
+
 
 ## Guide to Use
 ### Data Formatting
@@ -19,5 +29,6 @@ Can be used with any time of text classification, reading in labelled tabular da
 Min_DF
 Max_DF
 K_Top_Features
+gamma
 ### NLP Technique Selection
 
