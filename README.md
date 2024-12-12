@@ -1,6 +1,9 @@
 # EC503 Final Project
 ## By Loren Moreira, Alex Melnick, Bogdan Sadikovic, and Connor Casey
 # A Study and Analysis of Different Models and NLP Techniques for Supervised News Classification
+
+## Datasets
+|We utilized the 20newsgroup dataset which is available through scikitlearn, and the clickbait dataset which is available here https://huggingface.co/datasets/christinacdl/clickbait_detection_dataset
 ## Pipeline Architecture
 ### NLP
 Our pipeline supports three NLP feature extraction settings, Bag of Words, TF-IDF, or Both.
@@ -29,13 +32,25 @@ Implemented with scikit-learn. No hyperparameters set. Black box function utiliz
 
 ## Guide to Use
 ### Data Formatting
-Can be used with any time of text classification, reading in labelled tabular data. 
+Can be used with any time of text classification, reading in labelled tabular data.    
+
+The data gets preprocessed by having stop words (commonly used English words) and special character (&, -, etc.) removed, as they can inhibit the ability of the dataset to be analyzed. As such, they are removed by the NLP techniques, before the data gets tabularized.     
+Human text data is very unstructured, and incredibly difficult for a model to read and analyze, as there are many nuances that exist within human langauge, especially English. As such, the goal is to create a more structured dataset, which is easier for a model to read and make predictions from. 
+
 ### Hyperparameters
 Min_DF
 Max_DF
 K_Top_Features
-gamma
+Gamma
 ### NLP Technique Selection
+Bag of Words (BoW):
+The BoW program takes in a dataset to read. It initially pre-processes the data, by removing stop words, and removing any special, non alphabetical characters from the dataset. It then creates a vocabulary of all the words, and then goes through the entire dataset, and checks which words from the vocabulary are being used in each article, and how many times they appear. It then takes all that information, and tabularizes it. The goal is to create sparse, structured data that can be used by other techniques to get more processed data that is easier to read and analyze by other programs. 
+
+
+TF-IDF:
+TF-IDF also pre-processes the data, and removes any stop words or strange characters from its reading. It creates a TF-IDF vectorizer, which does so, along with establishing the maximum DF as 0.95 (Ignores if appears in >95% of words) and the minimum DF as 3(Ignores if <3 words). It then creates a sprace matrix. The goal is to create a sparce matrix that shows the importance of different terms, which allows for better analysis of the data in a structured format. 
+
+
 
 ### Feature Selections
 
