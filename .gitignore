@@ -11,3 +11,5 @@
 /train_label_fold0.csv
 /bag_of_words_test.csv
 /bag_of_words_train.csv
+/BoW_clickbait_test.csv
+/BoW_clickbait_train.csv

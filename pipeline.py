@@ -32,12 +32,18 @@ def pipeline(nlp, fs, model, dataset='20news', min_df=3, max_df=0.95, c=1, gamma
 
     # Load the data
     if(nlp == 'bow'):
+        print("Running BoW")
         # Load training data
-        train_data = pd.read_csv("bag_of_words_train.csv")
-        test_data = pd.read_csv("bag_of_words_test.csv")
+        train_data = pd.read_csv("BoW_clickbait_train.csv")
+        test_data = pd.read_csv("BoW_clickbait_test.csv")
 
-        train_label = train_data['article_name']
-        test_label = test_data['article_name']
+        colTrain, colTest = len(train_data.columns), len(test_data.columns)
+        minCol = min(colTrain, colTest)
+        train_data = train_data.iloc[:, :minCol]
+        test_data = test_data.iloc[:, :minCol]
+
+        train_label = train_data['label']
+        test_label = test_data['label']
 
         train_data = train_data.fillna(0)
         test_data = test_data.fillna(0)
@@ -62,10 +68,13 @@ def pipeline(nlp, fs, model, dataset='20news', min_df=3, max_df=0.95, c=1, gamma
 
         #call chi-square or mutual information based on settings
         if(fs =='chi_square'):
+            print("Running Chi-Square")
             fs_train_data,fs_test_data = chi_squared_selection(nlp, cv_fold, train_data, train_label, test_data, test_label, k, False)
         elif(fs =='mutual_info'):
+            print("Running Mutual Information")
             fs_train_data, fs_test_data = mutual_info_selection(nlp, cv_fold, train_data, train_label, test_data, test_label, k, False)
         elif(fs == 'no_feature_selection'):
+            print("Running without Feature Selection")
             fs_train_data = train_data
             fs_test_data = test_data
         else:
@@ -73,10 +82,13 @@ def pipeline(nlp, fs, model, dataset='20news', min_df=3, max_df=0.95, c=1, gamma
             exit(-1)
         #call svm,rfc,xgb based on settings
         if(model == 'svm'):
+            print("Running SVM")
             train_ccr_cv,train_f1_score_cv,train_conf_mat_cv,test_ccr_cv,test_f1_score_cv,test_conf_mat_cv = svm(fs_train_data,train_label,fs_test_data,test_label,gamma, c)
         elif(model == 'rfc'):
+            print("Running RFC")
             train_ccr_cv,train_f1_score_cv,train_conf_mat_cv,test_ccr_cv,test_f1_score_cv,test_conf_mat_cv = rfc(fs_train_data, train_label, fs_test_data, test_label)
         elif(model == 'nb'):
+            print("Running NB")
             train_ccr_cv,train_f1_score_cv,train_conf_mat_cv,test_ccr_cv,test_f1_score_cv,test_conf_mat_cv = nb(fs_train_data, train_label, fs_test_data, test_label)
         else:
             print("Error: No Model Entered")
@@ -115,6 +127,6 @@ if __name__ == "__main__":
         for fs in fs_methods:
             for model in model_methods:
                 print(f"Running {nlp} {fs} {model} pipeline")
-                pipeline(nlp, fs, model, k=1500)
+                pipeline(nlp, fs, model, k=500)
 
     print("Done running all pipelines")

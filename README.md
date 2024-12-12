@@ -38,4 +38,5 @@ gamma
 ### NLP Technique Selection
 
 ### Feature Selections
-Both Chi-Squared and Mutual Information are available for feature selection using the FeatureSelection.py class. The class is currently set up for use in pipeline.py with Bag of Words. If you want to run it on TF-IDF, you will need to comment out and uncomment a few lines. Specifically, comment out lines 31, 34, 114, and 116. Uncomment lines 33, 35, 113, and 117. 
+
+Both Chi-Squared and Mutual Information are available for feature selection using the FeatureSelection.py class. By running `python pipeline.py`, feature selection using both Chi-Squared and Mutual Information will be performed. Output will be in the terminal and saved to results.txt.
